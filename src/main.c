@@ -1,5 +1,9 @@
 #include <stdio.h>
 
+#define TARIFA_KM 1.20
+#define VALOR_PROTECAO 7.50
+#define VALOR_TENTATIVA 4.00
+
 double obterDistancia(void) {
     double distancia;
 
@@ -84,10 +88,83 @@ int obterTentativas(void) {
     return tentativas;
 }
 
+double obterValorBase(double distancia) {
+    if (distancia <= 5) {
+        return 8.00;
+    } else if (distancia <= 15) {
+        return 12.00;
+    } else if (distancia <= 30) {
+        return 18.00;
+    } else {
+        return 25.00;
+    }
+}
+
+double obterPercentualPeso(double peso) {
+    if (peso <= 2) {
+        return 0.00;
+    } else if (peso <= 5) {
+        return 0.05;
+    } else if (peso <= 10) {
+        return 0.10;
+    } else {
+        return 0.20;
+    }
+}
+
+double obterPercentualModalidade(int modalidade) {
+    if (modalidade == 1) {
+        return 0.00;
+    } else if (modalidade == 2) {
+        return 0.15;
+    } else {
+        return 0.30;
+    }
+}
+
+double calcularValorFinal(
+    double distancia,
+    double peso,
+    int modalidade,
+    int protecao,
+    int tentativas
+) {
+    double valorBase;
+    double subtotal;
+    double adicionalPeso;
+    double adicionalModalidade;
+    double adicionalProtecao;
+    double adicionalTentativas;
+
+    valorBase = obterValorBase(distancia);
+
+    subtotal = valorBase + (distancia * TARIFA_KM);
+
+    adicionalPeso = subtotal * obterPercentualPeso(peso);
+
+    adicionalModalidade =
+        subtotal * obterPercentualModalidade(modalidade);
+
+    if (protecao == 1) {
+        adicionalProtecao = VALOR_PROTECAO;
+    } else {
+        adicionalProtecao = 0.00;
+    }
+
+    adicionalTentativas = tentativas * VALOR_TENTATIVA;
+
+    return subtotal
+           + adicionalPeso
+           + adicionalModalidade
+           + adicionalProtecao
+           + adicionalTentativas;
+}
+
 int main(void) {
 
     double distancia;
     double peso;
+    double valorEntrega;
 
     int modalidade;
     int protecao;
@@ -103,6 +180,14 @@ int main(void) {
     protecao = obterProtecao();
     tentativas = obterTentativas();
 
+    valorEntrega = calcularValorFinal(
+        distancia,
+        peso,
+        modalidade,
+        protecao,
+        tentativas
+    );
+
     printf("\n====================================\n");
     printf("        DADOS DA ENTREGA\n");
     printf("====================================\n");
@@ -113,7 +198,7 @@ int main(void) {
     printf("Protecao: %d\n", protecao);
     printf("Tentativas adicionais: %d\n", tentativas);
 
-    printf("\nDados recebidos com sucesso!\n");
+    printf("\nValor da entrega: R$ %.2f\n", valorEntrega);
 
     return 0;
 }
