@@ -1,4 +1,4 @@
- #include <stdio.h>
+#include <stdio.h>
 
 double obterDistancia(void) {
     double distancia;
@@ -36,7 +36,8 @@ int obterModalidade(void) {
     int modalidade;
 
     do {
-        printf("\n1 - Economica\n");
+        printf("\nModalidades:\n");
+        printf("1 - Economica\n");
         printf("2 - Expressa\n");
         printf("3 - Prioritaria\n");
         printf("Escolha a modalidade: ");
@@ -51,22 +52,69 @@ int obterModalidade(void) {
     return modalidade;
 }
 
+int obterProtecao(void) {
+    int protecao;
+
+    do {
+        printf("Deseja contratar protecao? (1 = Sim / 0 = Nao): ");
+        scanf("%d", &protecao);
+
+        if (protecao != 0 && protecao != 1) {
+            printf("Erro: digite apenas 0 ou 1.\n");
+        }
+
+    } while (protecao != 0 && protecao != 1);
+
+    return protecao;
+}
+
+int obterTentativas(void) {
+    int tentativas;
+
+    do {
+        printf("Digite a quantidade de tentativas adicionais: ");
+        scanf("%d", &tentativas);
+
+        if (tentativas < 0) {
+            printf("Erro: a quantidade nao pode ser negativa.\n");
+        }
+
+    } while (tentativas < 0);
+
+    return tentativas;
+}
+
 int main(void) {
 
     double distancia;
     double peso;
-    int modalidade;
 
-    printf("=== SIMULADOR DE ENTREGAS ===\n\n");
+    int modalidade;
+    int protecao;
+    int tentativas;
+
+    printf("====================================\n");
+    printf("       SIMULADOR DE ENTREGAS\n");
+    printf("====================================\n\n");
 
     distancia = obterDistancia();
     peso = obterPeso();
     modalidade = obterModalidade();
+    protecao = obterProtecao();
+    tentativas = obterTentativas();
 
-    printf("\nDados recebidos com sucesso!\n");
+    printf("\n====================================\n");
+    printf("        DADOS DA ENTREGA\n");
+    printf("====================================\n");
+
     printf("Distancia: %.2f km\n", distancia);
     printf("Peso: %.2f kg\n", peso);
     printf("Modalidade: %d\n", modalidade);
+    printf("Protecao: %d\n", protecao);
+    printf("Tentativas adicionais: %d\n", tentativas);
+
+    printf("\nDados recebidos com sucesso!\n");
 
     return 0;
 }
+
