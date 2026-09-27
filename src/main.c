@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #define TARIFA_KM 1.20
-#define VALOR_PROTECAO 7.50
+#define PROTECAO 7.50
 #define VALOR_TENTATIVA 4.00
 
 double obterDistancia(void) {
@@ -88,6 +88,7 @@ int obterTentativas(void) {
     return tentativas;
 }
 
+
 double obterValorBase(double distancia) {
     if (distancia <= 5) {
         return 8.00;
@@ -99,6 +100,7 @@ double obterValorBase(double distancia) {
         return 25.00;
     }
 }
+
 
 double obterPercentualPeso(double peso) {
     if (peso <= 2) {
@@ -112,6 +114,7 @@ double obterPercentualPeso(double peso) {
     }
 }
 
+
 double obterPercentualModalidade(int modalidade) {
     if (modalidade == 1) {
         return 0.00;
@@ -121,6 +124,7 @@ double obterPercentualModalidade(int modalidade) {
         return 0.30;
     }
 }
+
 
 double calcularValorFinal(
     double distancia,
@@ -146,7 +150,7 @@ double calcularValorFinal(
         subtotal * obterPercentualModalidade(modalidade);
 
     if (protecao == 1) {
-        adicionalProtecao = VALOR_PROTECAO;
+        adicionalProtecao = PROTECAO;
     } else {
         adicionalProtecao = 0.00;
     }
@@ -160,37 +164,96 @@ double calcularValorFinal(
            + adicionalTentativas;
 }
 
+
+void exibirResultado(double valor) {
+    printf("\n-----------------------------\n");
+    printf("Valor da entrega: R$ %.2f\n", valor);
+    printf("-----------------------------\n\n");
+}
+
+
 int desejaContinuar(void) {
-    int continuar;
+    int opcao;
 
     do {
-        printf("\nDeseja realizar outra entrega? (1 = Sim / 0 = Nao): ");
-        scanf("%d", &continuar);
+        printf("Deseja processar outra entrega? (1 = Sim / 0 = Nao): ");
+        scanf("%d", &opcao);
 
-        if (continuar != 0 && continuar != 1) {
+        if (opcao != 0 && opcao != 1) {
             printf("Erro: digite apenas 0 ou 1.\n");
         }
 
-    } while (continuar != 0 && continuar != 1);
+    } while (opcao != 0 && opcao != 1);
 
-    return continuar;
+    return opcao;
 }
+
+
+void exibirResumo(
+    int totalEntregas,
+    double valorTotal,
+    int economicas,
+    int expressas,
+    int prioritarias,
+    double maiorValor,
+    double menorValor
+) {
+    printf("\n====================================\n");
+    printf("         RESUMO DA SESSAO\n");
+    printf("====================================\n");
+
+    printf("Total de entregas: %d\n", totalEntregas);
+    printf("Valor total: R$ %.2f\n", valorTotal);
+
+    if (totalEntregas > 0) {
+        printf("Valor medio: R$ %.2f\n",
+               valorTotal / totalEntregas);
+    } else {
+        printf("Valor medio: R$ 0.00\n");
+    }
+
+    printf("Entregas Economicas: %d\n", economicas);
+    printf("Entregas Expressas: %d\n", expressas);
+    printf("Entregas Prioritarias: %d\n", prioritarias);
+
+    if (totalEntregas > 0) {
+        printf("Maior valor: R$ %.2f\n", maiorValor);
+        printf("Menor valor: R$ %.2f\n", menorValor);
+    } else {
+        printf("Maior valor: R$ 0.00\n");
+        printf("Menor valor: R$ 0.00\n");
+    }
+
+    printf("====================================\n");
+}
+
 
 int main(void) {
 
     double distancia;
     double peso;
     double valorEntrega;
+    double valorTotal = 0.00;
+    double maiorValor = 0.00;
+    double menorValor = 0.00;
 
     int modalidade;
     int protecao;
     int tentativas;
+
+    int totalEntregas = 0;
+    int economicas = 0;
+    int expressas = 0;
+    int prioritarias = 0;
+
     int continuar;
 
+    printf("====================================\n");
+    printf("       SIMULADOR DE ENTREGAS\n");
+    printf("====================================\n");
+
     do {
-        printf("\n====================================\n");
-        printf("       SIMULADOR DE ENTREGAS\n");
-        printf("====================================\n\n");
+        printf("\n--- Nova entrega ---\n");
 
         distancia = obterDistancia();
         peso = obterPeso();
@@ -206,21 +269,47 @@ int main(void) {
             tentativas
         );
 
-        printf("\n====================================\n");
-        printf("        DADOS DA ENTREGA\n");
-        printf("====================================\n");
+        exibirResultado(valorEntrega);
 
-        printf("Distancia: %.2f km\n", distancia);
-        printf("Peso: %.2f kg\n", peso);
-        printf("Modalidade: %d\n", modalidade);
-        printf("Protecao: %d\n", protecao);
-        printf("Tentativas adicionais: %d\n", tentativas);
+        
+        totalEntregas++;
+        valorTotal += valorEntrega;
 
-        printf("\nValor da entrega: R$ %.2f\n", valorEntrega);
+        
+        if (modalidade == 1) {
+            economicas++;
+        } else if (modalidade == 2) {
+            expressas++;
+        } else {
+            prioritarias++;
+        }
+
+        if (totalEntregas == 1) {
+            maiorValor = valorEntrega;
+            menorValor = valorEntrega;
+        } else {
+            if (valorEntrega > maiorValor) {
+                maiorValor = valorEntrega;
+            }
+
+            if (valorEntrega < menorValor) {
+                menorValor = valorEntrega;
+            }
+        }
 
         continuar = desejaContinuar();
 
     } while (continuar == 1);
+
+    exibirResumo(
+        totalEntregas,
+        valorTotal,
+        economicas,
+        expressas,
+        prioritarias,
+        maiorValor,
+        menorValor
+    );
 
     return 0;
 }
