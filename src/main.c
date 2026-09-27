@@ -160,6 +160,22 @@ double calcularValorFinal(
            + adicionalTentativas;
 }
 
+int desejaContinuar(void) {
+    int continuar;
+
+    do {
+        printf("\nDeseja realizar outra entrega? (1 = Sim / 0 = Nao): ");
+        scanf("%d", &continuar);
+
+        if (continuar != 0 && continuar != 1) {
+            printf("Erro: digite apenas 0 ou 1.\n");
+        }
+
+    } while (continuar != 0 && continuar != 1);
+
+    return continuar;
+}
+
 int main(void) {
 
     double distancia;
@@ -169,37 +185,42 @@ int main(void) {
     int modalidade;
     int protecao;
     int tentativas;
+    int continuar;
 
-    printf("====================================\n");
-    printf("       SIMULADOR DE ENTREGAS\n");
-    printf("====================================\n\n");
+    do {
+        printf("\n====================================\n");
+        printf("       SIMULADOR DE ENTREGAS\n");
+        printf("====================================\n\n");
 
-    distancia = obterDistancia();
-    peso = obterPeso();
-    modalidade = obterModalidade();
-    protecao = obterProtecao();
-    tentativas = obterTentativas();
+        distancia = obterDistancia();
+        peso = obterPeso();
+        modalidade = obterModalidade();
+        protecao = obterProtecao();
+        tentativas = obterTentativas();
 
-    valorEntrega = calcularValorFinal(
-        distancia,
-        peso,
-        modalidade,
-        protecao,
-        tentativas
-    );
+        valorEntrega = calcularValorFinal(
+            distancia,
+            peso,
+            modalidade,
+            protecao,
+            tentativas
+        );
 
-    printf("\n====================================\n");
-    printf("        DADOS DA ENTREGA\n");
-    printf("====================================\n");
+        printf("\n====================================\n");
+        printf("        DADOS DA ENTREGA\n");
+        printf("====================================\n");
 
-    printf("Distancia: %.2f km\n", distancia);
-    printf("Peso: %.2f kg\n", peso);
-    printf("Modalidade: %d\n", modalidade);
-    printf("Protecao: %d\n", protecao);
-    printf("Tentativas adicionais: %d\n", tentativas);
+        printf("Distancia: %.2f km\n", distancia);
+        printf("Peso: %.2f kg\n", peso);
+        printf("Modalidade: %d\n", modalidade);
+        printf("Protecao: %d\n", protecao);
+        printf("Tentativas adicionais: %d\n", tentativas);
 
-    printf("\nValor da entrega: R$ %.2f\n", valorEntrega);
+        printf("\nValor da entrega: R$ %.2f\n", valorEntrega);
+
+        continuar = desejaContinuar();
+
+    } while (continuar == 1);
 
     return 0;
 }
-
